@@ -1,0 +1,37 @@
+schema-version: 1.0
+
+type: builder
+
+description: |
+  The p11-kit package provides a way to load and enumerate PKCS #11 (a Cryptographic Token Interface Standard) modules.
+  Installed Programs: p11-kit, trust, and update-ca-certificates
+  Installed Libraries: libp11-kit.so and p11-kit-proxy.so
+  Installed Directories: /etc/pkcs11, /usr/include/p11-kit-1, /usr/lib/pkcs11, /usr/libexec/p11-kit, /usr/share/gtk-doc/html/p11-kit, and /usr/share/p11-kit
+  Short Descriptions
+    p11-kit: is a command line tool that can be used to perform operations on PKCS#11 modules configured on the system
+    trust: is a command line tool to examine and modify the shared trust policy store
+    update-ca-certificates: is a command line tool to both extract local certificates from an updated anchor store, and regenerate all anchors and certificate stores on the system. This is done unconditionally on BLFS using the --force and --get flags to make-ca and should likely not be used for automated updates
+    libp11-kit.so: contains functions used to coordinate initialization and finalization of any PKCS#11 module
+    p11-kit-proxy.so: is the PKCS#11 proxy module
+
+in:
+  version: 0.24.1
+
+dependencies:
+  - pkg-config
+  - libtasn1
+  - libffi
+
+
+provision:
+  - url:
+      from: https://github.com/p11-glue/p11-kit/releases/download/{% version %}/p11-kit-{% version %}.tar.xz
+      todir: "{% xbeeSrc %}"
+
+build:
+  - shell:
+      cmds:
+        - ./configure --prefix=/usr
+        - make
+        - make install DESTDIR={% xbeeOut %}
+      directory: "{% xbeeSrc %}/p11-kit-{% version %}"
